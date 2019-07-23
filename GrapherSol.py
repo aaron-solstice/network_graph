@@ -130,6 +130,7 @@ test2 = create_network('Matt Damon', layers = 2, cut = .25)
 
 #nx.draw_circular(test1)
 
+#DOES NOT UPDATE DICTIONARY WITH MULTIPLE MOVIES 
              
             
 #edge thickness varies depending on total rank over projects
