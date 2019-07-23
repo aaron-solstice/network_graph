@@ -130,7 +130,10 @@ test2 = create_network('Matt Damon', layers = 2, cut = .25)
 
 #nx.draw_circular(test1)
 
-#DOES NOT UPDATE DICTIONARY WITH MULTIPLE MOVIES 
+#DOES NOT UPDATE NODE DICTIONARY WITH MULTIPLE MOVIES 
+#Test line for Git
+git = 5
+
              
             
 #edge thickness varies depending on total rank over projects
