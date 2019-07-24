@@ -73,7 +73,7 @@ class Grapher(object):
         self.G.remove_edge(name, name)
 '''
 Gr = nx.Graph()
-   
+
 def create_network(name = '', known_for = False, idnum = False, var1 = 'Actors', var2 = False, var3 = False, every = False, layers = 0, cut = 0):
     #print ('here1')
     talent = person(name = name, known_for = known_for, idnum = idnum)
@@ -81,59 +81,92 @@ def create_network(name = '', known_for = False, idnum = False, var1 = 'Actors',
     
     for bp in best_projs:
         bp = project(bp, cut)
-        ppl = bp.get_people()
-        #print ('here')
+        
+        for role, per in bp.talent.items():
+            if role in [var1, var2, var3]:
+                for p in per:
+                    Gr.add_nodes_from([(p, {bp.title : role})])
+                    Gr.add_edge(talent.name, p, rating = bp.rating)
+                    if layers > 1:
+                        create_network(name = p, var1 = var1, var2 = var2, var3 = var3, every = every, layers = layers - 1, cut = cut)
+        Gr.add_nodes_from([(talent.name, {bp.title : talent.role})])
+    return Gr
+            
+            
+'''            
+            if (role == 'Actors') and ('Actors' in [var1, var2, var3]):
+                Gr.add_nodes_from([(per, {bp.title : 'Actor'})])
+                Gr.add_edge(talent.name, per, rating = bp.get_rating())
+                if layers > 1:
+                #print (per, ': actor ', layers)
+                    create_network(name = per, var1 = var1, var2 = var2, var3 = var3, every = every, layers = layers - 1, cut = cut)
+            if (role == 'Directors') and ('Directors' in [var1, var2, var3]):
+                Gr.add_nodes_from([(per, {bp.title : 'Director'})])
+                Gr.add_edge(talent.name, per, rating = bp.get_rating())
+                if layers > 1:
+                #print (per, ': director ', layers)
+                    create_network(name = per, var1 = var1, var2 = var2, var3 = var3, every = every, layers = layers - 1, cut = cut)
+            if (role == 'Producers') and ('Producers' in [var1, var2, var3]):
+                Gr.add_nodes_from([(per, {bp.title : 'Producer'})])
+                Gr.add_edge(talent.name, per, rating = bp.get_rating())
+                if layers > 1:
+                #print (per, ': producer ', layers)
+                    create_network(name = per, var1 = var1, var2 = var2, var3 = var3, every = every, layers = layers - 1, cut = cut)
+            if (role == 'Writers') and ('Writers' in [var1, var2, var3]):
+                Gr.add_nodes_from([(per, {bp.title : 'Writer'})])
+                Gr.add_edge(talent.name, per, rating = bp.get_rating())
+                if layers > 1:
+                #print (per, ': writer ', layers)
+                    create_network(name = per, var1 = var1, var2 = var2, var3 = var3, every = every, layers = layers - 1, cut = cut)
+'''        
+        
+'''        
         if 'Actors' in [var1, var2, var3]:
             for per in ppl['Actors']:
-                Gr.add_node(per, Actor=bp.title)
-                Gr.add_edge(talent.name, per)#, rating = bp.get_rating())
+                #Gr.add_node(per, {bp.title : 'Actor'})
+                Gr.add_nodes_from([(per, {bp.title : 'Actor'})])
+                Gr.add_edge(talent.name, per, rating = bp.get_rating())
                 if layers > 1:
                 #print (per, ': actor ', layers)
                     create_network(name = per, var1 = var1, var2 = var2, var3 = var3, every = every, layers = layers - 1, cut = cut)
                 #print (1)
         if ('Directors' in [var1, var2, var3]) or (every):        
             for per in ppl['Directors']:
-                Gr.add_node(per, Director=bp.title)
-                Gr.add_edge(talent.name, per)#, rating = bp.get_rating())
+                Gr.add_nodes_from([(per, {bp.title : 'Director'})])
+                Gr.add_edge(talent.name, per, rating = bp.get_rating())
                 if layers > 1:
                 #print (per, ': director ', layers)
                     create_network(name = per, var1 = var1, var2 = var2, var3 = var3, every = every, layers = layers - 1, cut = cut)
                 #print (2)
         if ('Producers' in [var1, var2, var3]) or (every):
             for per in ppl['Producers']:
-                Gr.add_node(per, Producer=bp.title)
-                Gr.add_edge(talent.name, per)#, rating = bp.get_rating())
+                #Gr.add_node(per, Producer=bp.title)
+                Gr.add_nodes_from([(per, {bp.title : 'Producer'})])
+                Gr.add_edge(talent.name, per, rating = bp.get_rating())
                 if layers > 1:
                 #print (per, ': producer ', layers)
                     create_network(name = per, var1 = var1, var2 = var2, var3 = var3, every = every, layers = layers - 1, cut = cut)
                 #print (3)
         if ('Writers' in [var1, var2, var3]) or (every):
             for per in ppl['Writers']:
-                Gr.add_node(per, Writer=bp.title)
-                Gr.add_edge(talent.name, per)#, rating = bp.get_rating())
+                Gr.add_nodes_from([(per, {bp.title : 'Writer'})])
+                Gr.add_edge(talent.name, per, rating = bp.get_rating())
                 if layers > 1:
                 #print (per, ': writer ', layers)
                     create_network(name = per, var1 = var1, var2 = var2, var3 = var3, every = every, layers = layers - 1, cut = cut)
                 #print (4)
-                
-    return Gr
+        #role = talent.role
+        Gr.add_nodes_from([(talent.name, {bp.title : talent.role})])
+'''                
+    
             
     
-#guy = create_network(name = 'Daniel Kaluuya')
-   #256 
-test2 = create_network('Matt Damon', layers = 2, cut = .25)
+#test 2 = matt damon graph
+test3 = create_network('Mark Gill', layers = 2, cut = .25)
 #px = nx.spring_layout(test1)
 #nx.draw(test1, pos = px, with_labels = True)
 #plt.show()
     
-
-
-#nx.draw_circular(test1)
-
-#DOES NOT UPDATE NODE DICTIONARY WITH MULTIPLE MOVIES 
-#Test line for Git
-git = 5
-
              
             
 #edge thickness varies depending on total rank over projects

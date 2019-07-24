@@ -32,6 +32,7 @@ class person(object):
         self.generalURL = 'https://api.themoviedb.org/3/person/'+self.id+'?api_key=e448a896945245426e4dece19f7aeca8'
         self.get_role()
         self.role
+        self.return_role()
         self.project_list = []
         self.good_project_list = []
         self.set_projects()
@@ -67,6 +68,9 @@ class person(object):
         response = requests.request("GET", self.generalURL, data=payload)
         data = response.json()
         self.role = data['known_for_department']
+        
+    def return_role(self):
+        return self.role
     
     def set_projects(self):
         payload = "{}"
@@ -98,7 +102,7 @@ class person(object):
                 data = response.json()
                 try: 
                     (data['results'])
-                    if (data['results'][0]['vote_average'] >= 7.0) and (data['results'][0]['vote_count'] >= 300):
+                    if (data['results'][0]['vote_average'] >= 6.0) and (data['results'][0]['vote_count'] >= 300):
                         self.good_project_list.append(proj)
                 except:
                     pass

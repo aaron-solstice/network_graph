@@ -21,8 +21,8 @@ class project(object):
         self.multi_type
         self.id
         self.talent = {}
-        self.find_rating()
         self.rating = 0
+        self.find_rating()
         self.find_cast()
         #make a function to return only the relevant actors 
         #self.people_pop()
@@ -67,10 +67,10 @@ class project(object):
             if person['department'] == 'Writing':
                 writers.add(person['name'])
             
-        self.talent['Actors'] = list(actors)
-        self.talent['Directors'] = list(directors)
-        self.talent['Producers'] = list(producers)
-        self.talent['Writers'] = list(writers)
+        self.talent['Actor'] = list(actors)
+        self.talent['Director'] = list(directors)
+        self.talent['Producer'] = list(producers)
+        self.talent['Writer'] = list(writers)
         
     def find_rating(self):
         if self.multi_type == 'movie':
@@ -94,7 +94,7 @@ class project(object):
         return self.rating 
 
 
-madMax = project('Mad Max Fury Road')
+madMax = project('Mad Max Fury Road', cut = .25)
 '''
 print madMax.get_people()
 print madMax.get_rating()
