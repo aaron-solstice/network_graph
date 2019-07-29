@@ -10,7 +10,7 @@ Created on Wed Jul 17 10:10:06 2019
 #from imdb import IMDb
 
 import requests
-from ProjectClassSol import project
+#from ProjectClassSol import project
 
 class person(object):
     
@@ -32,9 +32,7 @@ class person(object):
         self.generalURL = 'https://api.themoviedb.org/3/person/'+self.id+'?api_key=e448a896945245426e4dece19f7aeca8'
         self.get_role()
         self.role
-        self.return_role()
         self.project_list = []
-        self.good_project_list = []
         self.set_projects()
         
     def get_id(self):
@@ -68,9 +66,6 @@ class person(object):
         response = requests.request("GET", self.generalURL, data=payload)
         data = response.json()
         self.role = data['known_for_department']
-        
-    def return_role(self):
-        return self.role
     
     def set_projects(self):
         payload = "{}"
@@ -87,9 +82,8 @@ class person(object):
         return self.project_list
     
     def get_good_projects(self):
-        if self.project_list == []:
-            self.good_project_list = []
-        else:
+        good_project_list = []
+        if self.project_list != []:
             for proj in self.project_list:
                 '''
                 proj1 = project(proj)
@@ -103,16 +97,16 @@ class person(object):
                 try: 
                     (data['results'])
                     if (data['results'][0]['vote_average'] >= 6.0) and (data['results'][0]['vote_count'] >= 300):
-                        self.good_project_list.append(proj)
+                        good_project_list.append(proj)
                 except:
                     pass
                 
                     
-        return self.good_project_list
+        return good_project_list
         
     
 
-#BP = person('Jonah Hill')
+BP = person('Jonah Hill')
 #projects = BP.get_projects()        
 
 '''
