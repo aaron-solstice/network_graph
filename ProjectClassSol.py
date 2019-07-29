@@ -24,8 +24,6 @@ class project(object):
         self.rating = 0
         self.find_rating()
         self.find_cast()
-        #make a function to return only the relevant actors 
-        #self.people_pop()
         
     def find_id(self):
         payload = "{}"
@@ -86,32 +84,18 @@ class project(object):
             response = requests.request("GET", box_url, data=payload)
             data = response.json()
             self.rating = data['vote_average']
-        
+'''    
     def get_people(self):
         return self.talent
     
     def get_rating(self):
         return self.rating 
+'''
 
-
-madMax = project('Mad Max Fury Road', cut = .25)
+#madMax = project('Mad Max Fury Road', cut = .25)
 '''
 print madMax.get_people()
 print madMax.get_rating()
-'''
-
-#Pseudocode for graph created through movie path
-'''
-for movie in movie_list:
-    for person in movie:
-        if person node does not exist:
-            add person node with info about job{movie: role}
-        if person does exist:
-            add to person node dictionary{movie: role}
-        for otherpeople in movie:
-            add edge bewtween person and otherpeople with info about box office
-        remove edge between person and person
-
 '''
 
 
