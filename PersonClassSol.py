@@ -14,6 +14,12 @@ import requests
 
 class person(object):
     
+    ''' A person object is initiated from someone's name(including what they are known for if
+    multiple people share the same name) or someone's TMDB id. For each person, their primary
+    role is obtained(actor/crew) and then their 'good' projects are found based on a TMDB rating.
+    Id's and URLs are used to gather data from TMDB's API
+    '''
+    
     def __init__(self, name = '', known_for = False, idnum = False):
         self.known_for = known_for
         self.name = name
@@ -32,7 +38,7 @@ class person(object):
         self.generalURL = 'https://api.themoviedb.org/3/person/'+self.id+'?api_key=e448a896945245426e4dece19f7aeca8'
         self.get_role()
         self.role
-        self.project_list = []
+        self.project_dic = {}
         self.set_projects()
         
     def get_id(self):
@@ -68,45 +74,46 @@ class person(object):
         self.role = data['known_for_department']
     
     def set_projects(self):
+        #change here to make it not have to do with what the role is
         payload = "{}"
         response = requests.request("GET", self.idURL, data=payload)
         data = response.json()
         if self.role != 'Acting':
             for proj in data['crew']:
-                self.project_list.append(proj['original_title'])
+                self.project_dic[str(proj['id'])] = proj['original_title']
         if self.role == 'Acting':
             for proj in data['cast']:
-                self.project_list.append(proj['original_title'])            
+                self.project_dic[str(proj['id'])] = proj['original_title']        
         
     def get_projects(self):
-        return self.project_list
+        return self.project_dic
     
     def get_good_projects(self):
-        good_project_list = []
-        if self.project_list != []:
-            for proj in self.project_list:
-                '''
-                proj1 = project(proj)
-                if proj1.get_rating() > 7.0:
-                    self.good_project_list.append(proj)
-                '''
-                url = 'https://api.themoviedb.org/3/search/multi?api_key=e448a896945245426e4dece19f7aeca8&query='+proj
+        good_project_dic = {}
+        if self.project_dic != {}:
+            for proj in self.project_dic.keys():
+                #url = 'https://api.themoviedb.org/3/search/multi?api_key=e448a896945245426e4dece19f7aeca8&query='+proj
+                url = 'https://api.themoviedb.org/3/movie/'+proj+'?api_key=e448a896945245426e4dece19f7aeca8'
                 payload = "{}"
                 response = requests.request("GET", url, data=payload)
                 data = response.json()
+                if (data['vote_average'] >= 6.0) and (data['vote_count'] >= 300):
+                        good_project_dic[proj] = self.project_dic[proj]
+                '''
                 try: 
                     (data['results'])
                     if (data['results'][0]['vote_average'] >= 6.0) and (data['results'][0]['vote_count'] >= 300):
                         good_project_list.append(proj)
                 except:
                     pass
+                '''
                 
                     
-        return good_project_list
+        return good_project_dic
         
     
 
-BP = person('Jonah Hill')
+BP = person('Brad Pitt')
 #projects = BP.get_projects()        
 
 '''
