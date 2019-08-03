@@ -12,9 +12,7 @@ import matplotlib.pyplot as plt
 from ProjectClassSol import project
 from PersonClassSol import person
 #import requests
-'''
-ADD SO THAT PEOPLE PROJECTS ARE ADDED WHEN THEY PLAY MORE THAN ONE ROLE IN THE PROJECT
-'''
+
 
 Gr = nx.Graph() #Creates a new epmty graph 
 
@@ -45,7 +43,7 @@ def create_network(name = '', known_for = False, idnum = False, roles = 'Actors'
     #Also note that the above function does NOT present the network visually       
 
 
-def visualize(g, para, labels = False):
+def visualize(g, para, labels = False, loose_ends = False):
     #function for visualizing graph
     #Remove edges from a new graph not old one
     graph = g
@@ -55,20 +53,30 @@ def visualize(g, para, labels = False):
     #print (type(eigenvec))
      
     for node in list(g.nodes()): #loop through nodes from graph g
-        if eigenvec[node] < para: #the the centrality value of the node is less than selected parameter
+        if (eigenvec[node] < para) or (loose_ends and g.degree(node) < 2): #the the centrality value of the node is less than selected parameter
             graph.remove_node(node) #remove the node (this also removes any edges connected to it)
     px = nx.spring_layout(graph) #present the graph in a 'spring' layout w/wo labels
     nx.draw(graph, pos = px, with_labels = labels)
     plt.show()
 
     #spring layout means presenting nodes such that to the greatest extent possible: edges are of similar length and as few edges crossing as poss
+
+
+def find_path(graph, person1, person2):
+    path = [p for p in nx.all_shortest_paths(graph, person1, person2)]
+    if (path):
+        return path
+    else:
+        return 'No path between those two people exists in this graph'
+
+
     
             
     
 #test 2 = matt damon graph
 #test 3 = mark gill
 #test 4 = Daniel Kaluuya    
-test5 = create_network('Charlie Chaplin', roles = 'Actors', layers = 3, cut = .25)
+test5 = create_network('Charlie Chaplin', roles = 'Actors', layers = 2, cut = .20)
 #visualize(test5, para = 0.0, labels = True)
 #px = nx.spring_layout(test3)
 #nx.draw(test3, pos = px, with_labels = True)
@@ -78,10 +86,13 @@ test5 = create_network('Charlie Chaplin', roles = 'Actors', layers = 3, cut = .2
 #what if multiple movies/edges together ->solved           
 #edge thickness varies depending on total rank over projects
 #Figure out which characters from the cast to include ->solved
-#At some point stop adding layers and start making connections for when c_o = True
+#At some point stop adding layers and start making connections for when c_o = True ->solved
 #Create graph first and then visualize WITH PARAMETER ->solved
 #dictionary node info ->solved
 #graph by id not name -.solved
 #enter two people's names and create graph until target person is found?
+
+#function for finding paths between people in graph
+
             
 
