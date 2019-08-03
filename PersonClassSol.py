@@ -113,17 +113,9 @@ class person(object):
         
     
 
-BP = person('Brad Pitt')
+#BP = person('Brad Pitt')
 #projects = BP.get_projects()        
 
-'''
-good = []
-for proj in projects:
-    BPP = project(proj)
-    #print type(BPmovie)
-    if (BPP.get_rating() >= 150000000) or (BPP.get_rating() > 7 and BPP.get_rating < 15):
-        good.append(BPP)
-'''
 
            
 
