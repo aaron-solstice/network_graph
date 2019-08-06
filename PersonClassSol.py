@@ -34,7 +34,8 @@ class person(object):
         if (not idnum):
             self.get_id()
         self.id
-        self.idURL = 'https://api.themoviedb.org/3/person/'+self.id+'/credits?api_key=e448a896945245426e4dece19f7aeca8'     
+        self.idURL = 'https://api.themoviedb.org/3/person/'+self.id+'/combined_credits?api_key=e448a896945245426e4dece19f7aeca8'
+        #'https://api.themoviedb.org/3/person/'+self.id+'/credits?api_key=e448a896945245426e4dece19f7aeca8'     
         self.generalURL = 'https://api.themoviedb.org/3/person/'+self.id+'?api_key=e448a896945245426e4dece19f7aeca8'
         self.get_role()
         self.role
@@ -47,18 +48,17 @@ class person(object):
         data = response.json()   
         if (self.known_for != False):
             switch = True
-            i = 0
+            out = 0
             while switch:
-                for curr in data['results'][i].values():
-                    if type(curr) == list:
-                        l = curr
-                #print (l)
-                if self.known_for in l[0].values():
-                    self.id = str(data['results'][i]['id'])
-                    switch = False
-                    #print ('here')
-                i += 1
-                #print (i)
+                size = len(data['results'][out]['known_for'])
+                inside = 0
+                while (inside < size) and (switch):
+                    if self.known_for in data['results'][out]['known_for'][inside].values():
+                        self.id = str(data['results'][out]['id'])
+                        switch = False
+                    inside += 1
+                out += 1
+            
         else: 
             try:#[0]['id']):
                 (data['results'])
@@ -80,40 +80,48 @@ class person(object):
         data = response.json()
         if self.role != 'Acting':
             for proj in data['crew']:
-                self.project_dic[str(proj['id'])] = proj['original_title']
+                if (proj['vote_average'] >= 6.0) and (proj['vote_count'] >= 300):
+                    self.project_dic[str(proj['id'])] = [proj['original_title'], proj['vote_average'], proj['media_type']]
         if self.role == 'Acting':
             for proj in data['cast']:
-                self.project_dic[str(proj['id'])] = proj['original_title']        
+                if (proj['vote_average'] >= 6.0) and (proj['vote_count'] >= 300):
+                    if proj['media_type'] == 'movie':
+                        self.project_dic[str(proj['id'])] = [proj['original_title'], proj['vote_average'], proj['media_type']]
+                    if proj['media_type'] == 'tv':
+                        self.project_dic[str(proj['id'])] = [proj['original_name'], proj['vote_average'], proj['media_type']]
         
     def get_projects(self):
         return self.project_dic
-    
+    '''
     def get_good_projects(self):
         good_project_dic = {}
         if self.project_dic != {}:
-            for proj in self.project_dic.keys():
-                #url = 'https://api.themoviedb.org/3/search/multi?api_key=e448a896945245426e4dece19f7aeca8&query='+proj
-                url = 'https://api.themoviedb.org/3/movie/'+proj+'?api_key=e448a896945245426e4dece19f7aeca8'
+            for proj in self.project_dic.values():
+                url = 'https://api.themoviedb.org/3/search/multi?api_key=e448a896945245426e4dece19f7aeca8&query='+proj
+                #url = 'https://api.themoviedb.org/3/movie/'+proj+'?api_key=e448a896945245426e4dece19f7aeca8'
                 payload = "{}"
                 response = requests.request("GET", url, data=payload)
                 data = response.json()
-                if (data['vote_average'] >= 6.0) and (data['vote_count'] >= 300):
+                
+                try:
+                    if (data['vote_average'] >= 6.0) and (data['vote_count'] >= 300):
                         good_project_dic[proj] = self.project_dic[proj]
-                '''
+                except:
+                    print(proj)
+                
+                
                 try: 
                     (data['results'])
                     if (data['results'][0]['vote_average'] >= 6.0) and (data['results'][0]['vote_count'] >= 300):
-                        good_project_list.append(proj)
+                        good_project_dic[proj] = self.project_dic[proj]
                 except:
                     pass
-                '''
-                
-                    
-        return good_project_dic
         
+        return good_project_dic
+        '''
     
 
-#BP = person('Brad Pitt')
+#BP = person('Daniel Kaluuya')
 #projects = BP.get_projects()        
 
 
