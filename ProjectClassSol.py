@@ -21,17 +21,17 @@ class project(object):
     off of only the title of a project
     '''
     
-    def __init__(self, idnum, cut = 0):
+    def __init__(self, idnum, media_type, cut = 0):
         self.id = idnum
         #self.title = title
         self.cut = cut
         #self.multi_url = 'https://api.themoviedb.org/3/search/multi?api_key=e448a896945245426e4dece19f7aeca8&query='+self.title
         #self.find_id()
-        self.multi_type = 'movie'
+        self.multi_type = media_type
         
         self.talent = {}
-        self.rating = 0
-        self.find_rating()
+        #self.rating = 0
+        #self.find_rating()
         self.find_cast()
     '''    
     def find_id(self):
@@ -53,34 +53,34 @@ class project(object):
         response = requests.request("GET", cast_url, data=payload)
         data = response.json()
 
-        actors = set()
-        producers = set()
-        directors = set()
-        writers = set()
+        actors = []
+        producers = []
+        directors = []
+        writers = []
         if self.cut:
             for person in data['cast'][:int(len(data['cast'])*self.cut)]:
-                actors.add(person['name'])
+                actors.append(str(person['id']))
         else:
             for person in data['cast']:
-                actors.add(person['name'])
+                actors.append(person['id'])
     
         for person in data['crew']:
             if person['department'] == 'Production':
-                producers.add(person['name'])
+                producers.append(str(person['id']))
         
         for person in data['crew']:
             if person['department'] == 'Directing':
-                directors.add(person['name'])
+                directors.append(str(person['id']))
         
         for person in data['crew']:
             if person['department'] == 'Writing':
-                writers.add(person['name'])
+                writers.append(str(person['id']))
             
-        self.talent['Actor'] = list(actors)
-        self.talent['Director'] = list(directors)
-        self.talent['Producer'] = list(producers)
-        self.talent['Writer'] = list(writers)
-        
+        self.talent['Actor'] = actors
+        self.talent['Director'] = directors
+        self.talent['Producer'] = producers
+        self.talent['Writer'] = writers
+    '''    
     def find_rating(self):
         if self.multi_type == 'movie':
             box_url = 'https://api.themoviedb.org/3/movie/'+self.id+'?api_key=e448a896945245426e4dece19f7aeca8'
@@ -95,6 +95,7 @@ class project(object):
             response = requests.request("GET", box_url, data=payload)
             data = response.json()
             self.rating = data['vote_average']
+    '''
 '''    
     def get_people(self):
         return self.talent
@@ -103,7 +104,7 @@ class project(object):
         return self.rating 
 '''
 
-#madMax = project('Mad Max Fury Road', cut = .25)
+#madMax = project('419430', media_type = 'movie', cut = .25)
 '''
 print madMax.get_people()
 print madMax.get_rating()
