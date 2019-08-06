@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 from ProjectClassSol import project
 from PersonClassSol import person
-#import requests
+import requests
 
 
 Gr = nx.Graph() #Creates a new epmty graph 
@@ -20,21 +20,21 @@ def create_network(name = '', known_for = False, idnum = False, roles = 'Actors'
     #roles determines which types of people to fill the graph with
     #layers determines how many series of connections to view
     talent = person(name = name, known_for = known_for, idnum = idnum) #creates person object based on inputed variables 
-    best_projs = talent.get_good_projects() #gets only the good projects from that person for size/runtime purposes
+    best_projs = talent.get_projects() #gets only the good projects from that person for size/runtime purposes
     
-    for bp in best_projs.keys(): #loop through this person's good projects  
-        proj = project(bp, cut) #for each project create a project object
+    for first, second in best_projs.items(): #loop through this person's good projects  
+        proj = project(first, second[2], cut) #for each project create a project object
         
         for role, per in proj.talent.items(): #loop through the cast in a project 
             if (role in roles) or (every == True): #based on which roles desired:
                 for p in per: #loop through the people in a certain role
-                    Gr.add_nodes_from([(p, {best_projs[bp] : role})]) #add a node for each person with info about the movie they're in and the role they play
+                    Gr.add_nodes_from([(p, {second[0] : role})]) #add a node for each person with info about the movie they're in and the role they play
                     if p != talent.name: #check to see if original person and person in projet are same person
-                        Gr.add_edges_from([(talent.name, p, {best_projs[bp] : proj.rating})]) #add edge between the above two with info on the movie they're in and the movie's rating
+                        Gr.add_edges_from([(talent.id, p, {second[0] : second[1]})]) #add edge between the above two with info on the movie they're in and the movie's rating
                     if layers > 1: #check number of layers of connections wanted
                         #print ('here')
-                        create_network(name = p, roles = roles, every = every, layers = layers - 1, cut = cut) #if want another layer, call function again with new central person from original person's projects cast and layers-1             
-        Gr.add_nodes_from([(talent.name, {best_projs[bp] : talent.role})]) #add a node for central person if their role is not one chosen in original parameters
+                        create_network(idnum = p, roles = roles, every = every, layers = layers - 1, cut = cut) #if want another layer, call function again with new central person from original person's projects cast and layers-1             
+        Gr.add_nodes_from([(talent.id, {second[0] : talent.role})]) #add a node for central person if their role is not one chosen in original parameters
             
     return Gr #return graph data
 
@@ -47,14 +47,21 @@ def visualize(g, para, labels = False, loose_ends = False):
     #function for visualizing graph
     #Remove edges from a new graph not old one
     graph = g
-    
     eigenvec = nx.eigenvector_centrality(g) #dictionary for every node in the graph assign it centrality value based on node's eigenvector: node centrality is based on centrality of neighboring nodes 
-
-    #print (type(eigenvec))
      
+    node_dic = {}
     for node in list(g.nodes()): #loop through nodes from graph g
         if (eigenvec[node] < para) or (loose_ends and g.degree(node) < 2): #the the centrality value of the node is less than selected parameter
             graph.remove_node(node) #remove the node (this also removes any edges connected to it)
+        else:
+            if (labels):
+                url = 'https://api.themoviedb.org/3/person/'+node+'?api_key=e448a896945245426e4dece19f7aeca8'
+                response = requests.request("GET", url, data="{}")
+                data = response.json()
+                node_dic[node] = data['id']
+    
+    graph = nx.relabel_nodes(graph, node_dic)
+    
     px = nx.spring_layout(graph) #present the graph in a 'spring' layout w/wo labels
     nx.draw(graph, pos = px, with_labels = labels)
     plt.show()
@@ -63,20 +70,16 @@ def visualize(g, para, labels = False, loose_ends = False):
 
 
 def find_path(graph, person1, person2):
-    path = [p for p in nx.all_shortest_paths(graph, person1, person2)]
-    if (path):
+    try:
+        path = [p for p in nx.all_shortest_paths(graph, person1, person2)]
         return path
-    else:
+    except:
         return 'No path between those two people exists in this graph'
 
-
+          
     
-            
     
-#test 2 = matt damon graph
-#test 3 = mark gill
-#test 4 = Daniel Kaluuya    
-test5 = create_network('Charlie Chaplin', roles = 'Actors', layers = 2, cut = .20)
+test = create_network('Daniel Kaluuya', roles = 'Actors', layers = 2, cut = .20)
 #visualize(test5, para = 0.0, labels = True)
 #px = nx.spring_layout(test3)
 #nx.draw(test3, pos = px, with_labels = True)
