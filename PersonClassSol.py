@@ -80,11 +80,11 @@ class person(object):
         data = response.json()
         if self.role != 'Acting':
             for proj in data['crew']:
-                if (proj['vote_average'] >= 6.0) and (proj['vote_count'] >= 300):
+                if (proj['vote_average'] >= 5.0) and (proj['vote_count'] >= 300):
                     self.project_dic[str(proj['id'])] = [proj['original_title'], proj['vote_average'], proj['media_type']]
         if self.role == 'Acting':
             for proj in data['cast']:
-                if (proj['vote_average'] >= 6.0) and (proj['vote_count'] >= 300):
+                if (proj['vote_average'] >= 5.0) and (proj['vote_count'] >= 300):
                     if proj['media_type'] == 'movie':
                         self.project_dic[str(proj['id'])] = [proj['original_title'], proj['vote_average'], proj['media_type']]
                     if proj['media_type'] == 'tv':

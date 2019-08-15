@@ -53,28 +53,29 @@ class project(object):
         response = requests.request("GET", cast_url, data=payload)
         data = response.json()
 
-        actors = []
-        producers = []
-        directors = []
-        writers = []
+        actors = {}
+        producers = {}
+        directors = {}
+        writers = {}
         if self.cut:
             for person in data['cast'][:int(len(data['cast'])*self.cut)]:
-                actors.append(str(person['id']))
+                #actors.append(str(person['id']))
+                actors[str(person['id'])] = person['name']
         else:
             for person in data['cast']:
-                actors.append(person['id'])
+                actors[str(person['id'])] = person['name']
     
         for person in data['crew']:
             if person['department'] == 'Production':
-                producers.append(str(person['id']))
+                producers[str(person['id'])] = person['name']
         
         for person in data['crew']:
             if person['department'] == 'Directing':
-                directors.append(str(person['id']))
+                directors[str(person['id'])] = person['name']
         
         for person in data['crew']:
             if person['department'] == 'Writing':
-                writers.append(str(person['id']))
+                writers[str(person['id'])] = person['name']
             
         self.talent['Actor'] = actors
         self.talent['Director'] = directors
