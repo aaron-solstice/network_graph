@@ -69,11 +69,11 @@ def visualize(g, para, labels = False, loose_ends = False):
     for node in graph.nodes():
         path = nx.shortest_path(graph, 'Mark Gill', node)
         if len(path) >= 3:
-            node_list.append('r')
-        if len(path) == 2:
             node_list.append('y')
+        if len(path) == 2:
+            node_list.append('orange')
         if len(path) == 1:
-            node_list.append('g')
+            node_list.append('r')
     
     px = nx.spring_layout(graph) #present the graph in a 'spring' layout w/wo labels
     nx.draw(graph, pos = px, with_labels = labels, node_color = [p for p in node_list], edge_color = 'grey')
@@ -128,7 +128,7 @@ def find_path(graph, person1, person2, all_people = False, centrality = False):
           
     
     
-ng = create_network("Chris D'Elia", roles = 'Actors', layers = 2, cut = .20)
+NG = create_network('Mark Gill', known_for = 'Olympus Has Fallen', roles = 'Actors', layers = 2, cut = .20)
 #visualize(test5, para = 0.0, labels = True)
 #px = nx.spring_layout(test3)
 #nx.draw(test3, pos = px, with_labels = True)
