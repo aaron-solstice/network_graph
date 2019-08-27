@@ -23,24 +23,11 @@ class project(object):
     
     def __init__(self, idnum, media_type, cut = 0):
         self.id = idnum
-        #self.title = title
         self.cut = cut
-        #self.multi_url = 'https://api.themoviedb.org/3/search/multi?api_key=e448a896945245426e4dece19f7aeca8&query='+self.title
-        #self.find_id()
         self.multi_type = media_type
-        
         self.talent = {}
-        #self.rating = 0
-        #self.find_rating()
         self.find_cast()
-    '''    
-    def find_id(self):
-        payload = "{}"
-        response = requests.request("GET", self.multi_url, data=payload)
-        data = response.json()
-        self.id = str(data['results'][0]['id'])
-        self.multi_type = data['results'][0]['media_type']
-    '''
+   
     
     def find_cast(self):
         
@@ -66,11 +53,11 @@ class project(object):
                 actors[str(person['id'])] = person['name']
     
         for person in data['crew']:
-            if person['department'] == 'Production':
+            if person['job'] == 'Producer':
                 producers[str(person['id'])] = person['name']
         
         for person in data['crew']:
-            if person['department'] == 'Directing':
+            if person['job'] == 'Director':
                 directors[str(person['id'])] = person['name']
         
         for person in data['crew']:
@@ -81,31 +68,9 @@ class project(object):
         self.talent['Director'] = directors
         self.talent['Producer'] = producers
         self.talent['Writer'] = writers
-    '''    
-    def find_rating(self):
-        if self.multi_type == 'movie':
-            box_url = 'https://api.themoviedb.org/3/movie/'+self.id+'?api_key=e448a896945245426e4dece19f7aeca8'
-            payload = "{}"
-            response = requests.request("GET", box_url, data=payload)
-            data = response.json()
-            self.rating = data['revenue']
-            
-        if self.multi_type == 'tv':
-            box_url = 'https://api.themoviedb.org/3/tv/'+self.id+'?api_key=e448a896945245426e4dece19f7aeca8'
-            payload = "{}"
-            response = requests.request("GET", box_url, data=payload)
-            data = response.json()
-            self.rating = data['vote_average']
-    '''
-'''    
-    def get_people(self):
-        return self.talent
     
-    def get_rating(self):
-        return self.rating 
-'''
 
-#madMax = project('419430', media_type = 'movie', cut = .25)
+#mov = project('82390', media_type = 'movie', cut = .25)
 '''
 print madMax.get_people()
 print madMax.get_rating()
