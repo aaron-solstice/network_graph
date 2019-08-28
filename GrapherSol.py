@@ -11,14 +11,14 @@ import matplotlib.pyplot as plt
 
 from ProjectClassSol import project
 from PersonClassSol import person
-import requests
 
 
 Gr = nx.Graph() #Creates a new epmty graph 
-seen = []
+seen = [] #list of seen people prevents loop connections
 
 def create_network(name = '', known_for = False, idnum = False, roles = 'Actors', every = False, layers = 0, cut = 0):
-    #roles determines which types of people to fill the graph with
+    #Function for creating the graph
+    #roles determines which types of people to fill the graph with (can set every to true and all roles are received)
     #layers determines how many series of connections to view
     talent = person(name = name, known_for = known_for, idnum = idnum) #creates person object based on inputed variables 
     seen.append(idnum)
@@ -34,10 +34,8 @@ def create_network(name = '', known_for = False, idnum = False, roles = 'Actors'
                     if per[p] != talent.name: #check to see if original person and person in projet are same person
                         Gr.add_edges_from([(talent.name, per[p], {second[0] : second[1]})]) #add edge between the above two with info on the movie they're in and the movie's rating
                     if layers > 1 and p not in seen: #check number of layers of connections wanted
-                        #print ('here')
                         create_network(idnum = p, roles = roles, every = every, layers = layers - 1, cut = cut) #if want another layer, call function again with new central person from original person's projects cast and layers-1             
         Gr.add_nodes_from([(talent.name, {second[0] : talent.role})]) #add a node for central person if their role is not one chosen in original parameters
-        #Gr.remove_edge(talent.name, talent.name)  
         
     return Gr #return graph data
 
@@ -48,7 +46,6 @@ def create_network(name = '', known_for = False, idnum = False, roles = 'Actors'
 
 def visualize(g, para, labels = False, loose_ends = False):
     #function for visualizing graph
-    #Remove edges from a new graph not old one
     graph = nx.Graph()
     graph = g
     eigenvec = nx.eigenvector_centrality(g) #dictionary for every node in the graph assign it centrality value based on node's eigenvector: node centrality is based on centrality of neighboring nodes 
@@ -60,8 +57,8 @@ def visualize(g, para, labels = False, loose_ends = False):
             graph.remove_node(node) #remove the node (this also removes any edges connected to it)
     
     node_list = []
-    for node in graph.nodes():
-        path = nx.shortest_path(graph, first, node) #CHANGE THIS
+    for node in graph.nodes(): #for coloring nodes of different layers
+        path = nx.shortest_path(graph, first, node)
         if len(path) >= 3:
             node_list.append('orange')
         if len(path) == 2:
@@ -90,6 +87,7 @@ def score(graph, people):
     return total
 
 def find(graph, people):
+    #Function for finding the average movie rating in a path of people
     total = 0
     num = 0
     size = len(people) - 1
@@ -150,14 +148,5 @@ def find_path(graph, person1, person2, num_movies = False, centrality = False, r
     
 ng = create_network('Russell Crowe', roles = 'Actors Producers Directors', layers = 2, cut = .20)
 
-             
-#what if multiple movies/edges together ->solved           
-#edge thickness varies depending on total rank over projects
-#Figure out which characters from the cast to include ->solved
-#At some point stop adding layers and start making connections for when c_o = True ->solved
-#Create graph first and then visualize WITH PARAMETER ->solved
-#dictionary node info ->solved
-#graph by id not name -.solved
-#enter two people's names and create graph until target person is found?
-
+            
 
