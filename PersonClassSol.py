@@ -7,8 +7,6 @@ Created on Wed Jul 17 10:10:06 2019
 """
 
 
-#from imdb import IMDb
-
 import requests
 #from ProjectClassSol import project
 
@@ -16,8 +14,9 @@ class person(object):
     
     ''' A person object is initiated from someone's name(including what they are known for if
     multiple people share the same name) or someone's TMDB id. For each person, their primary
-    role is obtained(actor/crew) and then their 'good' projects are found based on a TMDB rating.
-    Id's and URLs are used to gather data from TMDB's API
+    role(actor/director/producer/writer) is obtained and then their 'good' projects are found 
+    based on threshold set by a TMDB rating. Only projects in which the person is performing 
+    their primary role are returned. Id's and URLs are used to gather data from TMDB's API.
     '''
     
     def __init__(self, name = '', known_for = False, idnum = False):
@@ -35,7 +34,6 @@ class person(object):
             self.get_id()
         self.id
         self.idURL = 'https://api.themoviedb.org/3/person/'+self.id+'/combined_credits?api_key=e448a896945245426e4dece19f7aeca8'
-        #'https://api.themoviedb.org/3/person/'+self.id+'/credits?api_key=e448a896945245426e4dece19f7aeca8'     
         self.generalURL = 'https://api.themoviedb.org/3/person/'+self.id+'?api_key=e448a896945245426e4dece19f7aeca8'
         self.get_role()
         self.role
@@ -60,7 +58,7 @@ class person(object):
                 out += 1
             
         else: 
-            try:#[0]['id']):
+            try:
                 (data['results'])
                 self.id = str(data['results'][0]['id'])
             except:
@@ -74,7 +72,6 @@ class person(object):
         self.role = data['known_for_department']
     
     def set_projects(self):
-        #change here to make it not have to do with what the role is
         payload = "{}"
         response = requests.request("GET", self.idURL, data=payload)
         data = response.json()
@@ -97,9 +94,6 @@ class person(object):
     def get_projects(self):
         return self.project_dic
     
-
-BP = person(idnum = '68320')
-#projects = BP.get_projects()        
 
 
            

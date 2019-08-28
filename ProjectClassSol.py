@@ -6,8 +6,6 @@ Created on Wed Jul 17 10:09:05 2019
 @author: RyanAlco
 """
 
-#import json
-#from imdb import IMDb
 
 import requests
 
