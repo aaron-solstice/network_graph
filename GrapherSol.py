@@ -13,8 +13,8 @@ from ProjectClassSol import project
 from PersonClassSol import person
 
 
-Gr = nx.Graph() #Creates a new epmty graph 
-seen = [] #list of seen people prevents loop connections
+Gr = nx.Graph() 
+seen = [] 
 
 def create_network(name = '', known_for = False, idnum = False, roles = 'Actors', every = False, layers = 0, cut = 0):
 #Function for creating the graph
@@ -22,20 +22,20 @@ def create_network(name = '', known_for = False, idnum = False, roles = 'Actors'
 #layers determines how many series of connections to view
     talent = person(name = name, known_for = known_for, idnum = idnum) #creates person object based on inputed variables 
     seen.append(idnum)
-    best_projs = talent.get_projects() #gets only the good projects from that person for size/runtime purposes
+    best_projs = talent.get_projects() 
     
-    for first, second in best_projs.items(): #loop through this person's good projects  
-        proj = project(first, second[2], cut) #for each project create a project object
+    for first, second in best_projs.items():  
+        proj = project(first, second[2], cut) 
         
-        for role, per in proj.talent.items(): #loop through the cast in a project 
-            if (role in roles) or (every == True): #based on which roles desired:
-                for p in per: #loop through the people in a certain role
-                    Gr.add_nodes_from([(per[p], {second[0] : role})]) #add a node for each person with info about the movie they're in and the role they play
-                    if per[p] != talent.name: #check to see if original person and person in projet are same person
-                        Gr.add_edges_from([(talent.name, per[p], {second[0] : second[1]})]) #add edge between the above two with info on the movie they're in and the movie's rating
-                    if layers > 1 and p not in seen: #check number of layers of connections wanted
-                        create_network(idnum = p, roles = roles, every = every, layers = layers - 1, cut = cut) #if want another layer, call function again with new central person from original person's projects cast and layers-1             
-        Gr.add_nodes_from([(talent.name, {second[0] : talent.role})]) #add a node for central person if their role is not one chosen in original parameters
+        for role, per in proj.talent.items(): 
+            if (role in roles) or (every == True): 
+                for p in per: 
+                    Gr.add_nodes_from([(per[p], {second[0] : role})]) 
+                    if per[p] != talent.name: 
+                        Gr.add_edges_from([(talent.name, per[p], {second[0] : second[1]})]) 
+                    if layers > 1 and p not in seen: 
+                        create_network(idnum = p, roles = roles, every = every, layers = layers - 1, cut = cut)              
+        Gr.add_nodes_from([(talent.name, {second[0] : talent.role})]) 
         
     return Gr 
 
@@ -48,16 +48,16 @@ def visualize(g, para, labels = False, loose_ends = False):
 #function for visualizing graph
     graph = nx.Graph()
     graph = g
-    eigenvec = nx.eigenvector_centrality(graph) #dictionary for every node in the graph assign it centrality value based on node's eigenvector: node centrality is based on centrality of neighboring nodes 
+    eigenvec = nx.eigenvector_centrality(graph)  
     
     first = list(graph.nodes())[0]
     
-    for node in list(graph.nodes()): #loop through nodes from graph g
-        if (eigenvec[node] < para) or (loose_ends and g.degree(node) < 2): #the the centrality value of the node is less than selected parameter
-            graph.remove_node(node) #remove the node (this also removes any edges connected to it)
+    for node in list(graph.nodes()): 
+        if (eigenvec[node] < para) or (loose_ends and g.degree(node) < 2): 
+            graph.remove_node(node) 
     
     node_list = []
-    for node in graph.nodes(): #for coloring nodes of different layers
+    for node in graph.nodes(): 
         path = nx.shortest_path(graph, first, node)
         if len(path) >= 3:
             node_list.append('blue')
@@ -66,7 +66,7 @@ def visualize(g, para, labels = False, loose_ends = False):
         if len(path) == 1:
             node_list.append('r')
     
-    px = nx.spring_layout(graph) #present the graph in a 'spring' layout w/wo labels
+    px = nx.spring_layout(graph) 
     nx.draw_networkx_nodes(graph, pos = px, node_color = [p for p in node_list], alpha = .9)
     nx.draw_networkx_edges(graph, pos = px, edge_color = 'grey', alpha = .25)
     if labels:

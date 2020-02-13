@@ -31,7 +31,6 @@ class project(object):
             cast_url = 'https://api.themoviedb.org/3/movie/'+self.id+'/credits?api_key=e448a896945245426e4dece19f7aeca8'
         if self.multi_type == 'tv':
             cast_url = 'https://api.themoviedb.org/3/tv/'+self.id+'/credits?api_key=e448a896945245426e4dece19f7aeca8'
-        #payload = "{}"
         response = requests.get(cast_url)
         data = response.json()
 

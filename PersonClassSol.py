@@ -25,7 +25,6 @@ class person(object):
         if (idnum):
             self.id = idnum
             IDURL = 'http://api.themoviedb.org/3/person/'+self.id+'?api_key=e448a896945245426e4dece19f7aeca8'
-            #payload = "{}"
             response = requests.get(IDURL)
             data = response.json()
             self.name = data['name']
@@ -40,7 +39,6 @@ class person(object):
         self.set_projects()
         
     def get_id(self):
-        #payload = "{}"
         response = requests.get(self.personURL)
         data = response.json()   
         if (self.known_for != False):
@@ -65,13 +63,11 @@ class person(object):
                 
         
     def get_role(self):
-        #payload = "{}"
         response = requests.get(self.generalURL)
         data = response.json()
         self.role = data['known_for_department']
     
     def set_projects(self):
-        #payload = "{}"
         response = requests.get(self.idURL)
         data = response.json()
         if self.role != 'Acting':
