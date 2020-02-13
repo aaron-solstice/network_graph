@@ -8,7 +8,6 @@ Created on Wed Jul 17 10:10:06 2019
 
 
 import requests
-#from ProjectClassSol import project
 
 class person(object):
     
@@ -26,8 +25,8 @@ class person(object):
         if (idnum):
             self.id = idnum
             IDURL = 'http://api.themoviedb.org/3/person/'+self.id+'?api_key=e448a896945245426e4dece19f7aeca8'
-            payload = "{}"
-            response = requests.request("GET", IDURL, data=payload)
+            #payload = "{}"
+            response = requests.get(IDURL)
             data = response.json()
             self.name = data['name']
         if (not idnum):
@@ -41,8 +40,8 @@ class person(object):
         self.set_projects()
         
     def get_id(self):
-        payload = "{}"
-        response = requests.request("GET", self.personURL, data=payload)
+        #payload = "{}"
+        response = requests.get(self.personURL)
         data = response.json()   
         if (self.known_for != False):
             switch = True
@@ -66,14 +65,14 @@ class person(object):
                 
         
     def get_role(self):
-        payload = "{}"
-        response = requests.request("GET", self.generalURL, data=payload)
+        #payload = "{}"
+        response = requests.get(self.generalURL)
         data = response.json()
         self.role = data['known_for_department']
     
     def set_projects(self):
-        payload = "{}"
-        response = requests.request("GET", self.idURL, data=payload)
+        #payload = "{}"
+        response = requests.get(self.idURL)
         data = response.json()
         if self.role != 'Acting':
             for proj in data['crew']:
@@ -97,6 +96,5 @@ class person(object):
 
 
            
-
 
 
